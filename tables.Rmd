@@ -1,0 +1,222 @@
+---
+title: "Tables"
+output: html_document
+runtime: shiny
+resource_files:
+- _site.yml
+---
+
+--------------
+
+```{r load Data Table, include=FALSE}
+library(DT)
+library(tidyverse)
+library(data.table)
+```
+
+```{r load data, include = FALSE}
+df <- data.table::fread("https://media.githubusercontent.com/media/flemm0/PM566_project/main/data/processed_data.csv")
+knitr::opts_chunk$set(echo=FALSE, message = FALSE)
+```
+
+```{css font}
+body {
+    font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 13px;
+    line-height: 1.846;
+    color: #666666;
+    background-color: #ffffff;
+}
+```
+
+
+{.tabset .tabset-pills}
+-----------------------
+
+### Table 1
+
+```{r table 1}
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), # rounding output to three decimal places to make more readable
+     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+     num_observations = .N
+     ),
+   by = c("intake_day_of_the_week", "intake_day_cat")][order(intake_day_of_the_week)][, intake_day_cat:num_observations] %>%
+  datatable(colnames = c("Day of Food Intake", 
+                             "Average Total Sugar Consumption (grams)",
+                             "Standard Deviation of Total Sugar Consumption",
+                             "Average Total Saturated Fatty Acid Consumption (grams)",
+                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                             "Number of Observations"))
+```
+
+Average sugar and saturated fat consumption appears to be highest on Friday, Saturday, and Sunday. Tuesday is the day with the lowest average sugar and saturated fat consumption.
+
+### Table 2
+
+
+```{r sugar fat consumption by time of consumption}
+df <- df %>%
+  mutate(time_of_eating_hour = format(as.POSIXct(time_of_eating_occasion_hhmm, format = "%H:%M:%S"), "%H")) %>%
+  as.data.table() 
+
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
+   std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+   avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+   std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+   num_observations = .N 
+   ), 
+   by = time_of_eating_hour][order(time_of_eating_hour)] %>%
+datatable(colnames = c("Hour of the Day", 
+                           "Average Total Sugar Consumption (grams)",
+                           "Standard Deviation of Total Sugar Consumption",
+                           "Average Total Saturated Fatty Acid Consumption (grams)",
+                           "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                           "Number of Observations"))
+```
+
+The table above looks at hourly average sugar and saturated fat consumption, with 0 corresponding to all items consumed between 12:00 AM and 12:59 PM, 1 corresponding to all items consumed between 1:00 AM and 1:59 AM, etc. It appears that average sugar and saturated fat consumption is highest between the hours of 8:00 PM and 3:00 AM.
+
+
+### Table 3
+
+```{r}
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
+     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+     num_observations = .N
+   ), 
+   by = eating_occasion][, eating_occasion := fifelse(eating_occasion == "Desayano", "Desayano (breakfast)", # include english translations of the spanish meal occasions
+                                                fifelse(eating_occasion == "Almuerzo", "Almuerzo (breakfast)",
+                                                fifelse(eating_occasion == "Comida", "Comida (lunch)",
+                                                fifelse(eating_occasion == "Merienda", "Merienda (snack)",
+                                                fifelse(eating_occasion == "Cena", "Cena (dinner)",
+                                                fifelse(eating_occasion == "Entre comida", "Entre comida (snack)",
+                                                fifelse(eating_occasion == "Botana", "Botana (snack)",
+                                                fifelse(eating_occasion == "Bocadillo", "Bocadillo (snack)",
+                                                fifelse(eating_occasion == "Tentempie", "Tentempie (snack)",
+                                                fifelse(eating_occasion == "Bebida", "Bebida (drink)", eating_occasion))))))))))][order(-avg_total_sugar, -avg_total_sat_fa)] %>%
+  datatable(colnames = c("Eating Occasion", 
+                             "Average Total Sugar Consumption (grams)",
+                             "Standard Deviation of Total Sugar Consumption",
+                             "Average Total Saturated Fatty Acid Consumption (grams)",
+                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                             "Number of Observations"))
+```
+
+Eating occasions that are more considered to be more formal meals, such as dinner, lunch, almuerzo (breakfast), desayano (breakfast), supper, etc. generally involve less consumption of sugar than do informal eating occasions such as snacks (including bocadillo, botana, merienda, entre comida). The reverse is true for saturated fats consumption, as the average grams consumed for these are slightly higher in more formal eating occasions.
+\
+Note: the data I used (2017-2020) did not provide English translations for Spanish meal names, but they were provided in the 2003-2004 NHANES data [documentation](https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/dr1iff_c.htm#DR1_030Z), which is what I used for reference in this analysis:
+
+
+### Table 4
+
+```{r sugar and saturated fat consumption by age category}
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
+     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+     num_observations = .N,
+     min(age_in_years_at_screening)
+     ), 
+   by = "age_category"][order(V6)][, !c("V6")] %>%
+  datatable(colnames = c("Age Range", 
+                             "Average Total Sugar Consumption (grams)",
+                             "Standard Deviation of Total Sugar Consumption",
+                             "Average Total Saturated Fatty Acid Consumption (grams)",
+                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                             "Number of Observations"))
+```
+
+Average sugar and saturated fat consumption increases from birth until the ages of 14-18, and then decreases after age 18.
+
+
+### Table 5
+
+```{r sugar and saturated fat consumption by gender}
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
+     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+     num_observations = .N
+     ), 
+   by = "gender"] %>%
+  datatable(colnames = c("Gender", 
+                             "Average Total Sugar Consumption (grams)",
+                             "Standard Deviation of Total Sugar Consumption",
+                             "Average Total Saturated Fatty Acid Consumption (grams)",
+                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                             "Number of Observations"))
+```
+
+Males consume higher amounts of sugar and saturated fatty acids on average, which makes sense considering that generally males have larger bodies than females, requiring them to consume more calories on average.
+
+
+
+### Table 6
+
+```{r sugar and saturated fat consumption by ethnicity}
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
+     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+     num_observations = .N
+     ), 
+   by = "racehispanic_origin_w_nh_asian"] %>%
+  datatable(colnames = c("Race", 
+                             "Average Total Sugar Consumption (grams)",
+                             "Standard Deviation of Total Sugar Consumption",
+                             "Average Total Saturated Fatty Acid Consumption (grams)",
+                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                             "Number of Observations"))
+```
+
+The groups with the highest average sugar and saturated fat consumption are "other race including multiracial" and "non-hispanic black", and they are closely followed by "non-hispanic white". The "non hispanic asian" group consumes less sugar and saturated fats on average than other groups.
+
+### Table 7
+
+```{r sugar and saturated fat consumption by source of food}
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
+     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+     num_observations = .N
+     ), 
+   by = "food_source"][order(-avg_total_sugar, -avg_total_sat_fa)] %>%
+  datatable(colnames = c("Food Source", 
+                             "Average Total Sugar Consumption (grams)",
+                             "Standard Deviation of Total Sugar Consumption",
+                             "Average Total Saturated Fatty Acid Consumption (grams)",
+                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                             "Number of Observations"))
+```
+High average sugar consumption can be seen to come from food sources such as vending machines and convenience stores, likely due to the sale of sugar-sweetened beverages. High saturated fatty acid consumption can be seen to come from food sources such as fish (likely due to naturally occurring omega fatty acids in fish) as well as fast food restaurants and recreational facilities.
+
+### Table 8
+
+```{r sugar and saturated fat consumption by where meal was eaten}
+df[, 
+   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
+     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
+     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
+     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
+     num_observations = .N
+     ), 
+   by = "did_you_eat_this_meal_at_home"][order(-avg_total_sugar)] %>%
+  datatable(colnames = c("Meal Eaten at Home", 
+                             "Average Total Sugar Consumption (grams)",
+                             "Standard Deviation of Total Sugar Consumption",
+                             "Average Total Saturated Fatty Acid Consumption (grams)",
+                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
+                             "Number of Observations"))
+```
+The table above reveals that food not eaten at home is generally slightly higher in average sugars and saturated fatty acids, however, the difference is quite small.

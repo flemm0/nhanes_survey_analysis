@@ -1,0 +1,19 @@
+name: "my-website"
+output_dir: "."
+navbar:
+  title: "Food Survey Investigation"
+  left:
+    - text: "Home Page"
+      href: shiny_tabset.Rmd
+    - text: "Tables"
+      href: tables.Rmd
+    - text: "Supplementary"
+      href: supp.Rmd
+  right:
+    - text: "About the Author"
+      href: about.Rmd
+output:
+  html_document:
+    theme: paper
+    include:
+      after_body: footer.html

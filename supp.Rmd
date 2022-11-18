@@ -1,0 +1,140 @@
+---
+title: "Supplementary Figures"
+output: html_document
+runtime: shiny
+resource_files:
+- _site.yml
+---
+
+--------------
+
+```{r setup, include=FALSE}
+library(shiny)
+library(shinythemes)
+library(data.table)
+library(tidyverse)
+library(DT)
+library(shiny)
+library(plotly)
+library(chron)
+
+df <- data.table::fread("https://media.githubusercontent.com/media/flemm0/PM566_project/main/data/processed_data.csv")
+
+knitr::opts_chunk$set(echo=FALSE, message = FALSE)
+```
+
+```{css style}
+.column-left{
+  float: left;
+  width: 15%;
+  text-align: left;
+  padding: 5px;
+}
+.column-right{
+  float: right;
+  width: 85%;
+  text-align: left;
+  padding: 5px;
+}
+```
+
+```{css font}
+body {
+    font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 13px;
+    line-height: 1.846;
+    color: #666666;
+    background-color: #ffffff;
+}
+```
+
+
+{.column-left}
+--------------
+
+```{r sidebar}
+selectizeInput(
+              inputId = "ingredient", 
+              label = "Select Data to View:", 
+              choices = c("Sugar", "Saturated Fatty Acid"),
+              selected = "Sugar"
+              )
+
+```
+
+
+{.column-right}
+--------------
+
+##### Supplementary Figure 1
+```{r sf1}
+renderPlotly({
+    x = ifelse(input$ingredient == "Sugar", 
+               "total_sugars_gm", "total_saturated_fatty_acids_gm")
+    df %>%
+      filter(!! rlang::sym(x) != 0) %>%
+      mutate(consumption = log(!! rlang::sym(x))) %>%
+      plot_ly(x = ~consumption, type = "histogram", color = ~did_you_eat_this_meal_at_home, alpha = 0.6, nbinsx = 200) %>%
+      layout(xaxis = list(title = paste("Log", input$ingredient, "Consumption", sep = " ")),
+             yaxis = list(title = "Count"),
+             barmode = "overlay",
+             title = paste(input$ingredient, "Consumption vs Whether Meal Eaten at Home"))
+  })
+```
+
+The distributions above describe the amount of sugar and saturated fa in individual food items grouped by whether the item was eaten at home or not. Food items containing zero sugar or saturated fa were excluded and the x-axis was log transformed to account for few items having high amounts of sugar or saturated fa. It can be observed that whether the food item was consumed at home or not does not have a significant effect on sugar or saturated fa consumption, as the distributions for “yes” and “no” are very similar in both plots.
+
+--------------
+
+##### Supplementary Figure 2
+```{r sf2}
+renderPlotly({
+    x = ifelse(input$ingredient == "Sugar", 
+              "total_sugars_gm", "total_saturated_fatty_acids_gm")
+    
+    if (x == "total_sugars_gm") {
+      df %>%
+        filter(total_sugars_gm > 33.11) %>%
+        count(long_food_code_description) %>%
+        top_n(30) %>%
+        arrange(desc(n)) %>%
+        plot_ly(x = ~n, y = ~long_food_code_description) %>%
+        add_bars() %>%
+        layout(
+          yaxis = list(categoryorder = "total ascending",
+                            tickfont = list(size = 7),
+                            title = "Food Item"),
+          xaxis = list(title = "Number of Times Recorded in Dataset"),
+          title = "Top 30 Food Items Containing Over 33.11 Grams Total Sugar"
+          )
+    } else {
+      df %>%
+        filter(total_saturated_fatty_acids_gm > 8.511) %>%
+        count(long_food_code_description) %>%
+        top_n(30) %>%
+        arrange(desc(n)) %>%
+        plot_ly(x = ~n, y = ~long_food_code_description) %>%
+        add_bars() %>%
+        layout(
+          yaxis = list(categoryorder = "total ascending",
+                            tickfont = list(size = 7),
+                            title = "Food Item"),
+          xaxis = list(title = "Number of Times Recorded in Dataset"),
+          title = "Top 30 Food Items Containing Over 8.51 Grams Total Saturated Fatty Acid"
+          )
+    }
+  })
+```
+
+It is interesting to see that the top four most common high-sugar content items are soft-drinks, and that 21 out of 30 of the items are a type of beverage. For saturated fatty acids, commonly occurring food items are pizza and dairy products (including ice cream, milkshakes, cheese, and milk).
+
+--------------
+
+##### Supplementary Table 1
+
+```{r}
+df[, .(.N, round(mean(grams), 0)), by = long_food_code_description][order(-N)] %>%
+  datatable(colnames = c("Food Item", "Number of Observations", "Average grams consumed"))
+```
+
+

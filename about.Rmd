@@ -1,0 +1,18 @@
+---
+title: "About Me"
+output: html_document
+---
+
+
+Hello, my name is Flemming Wu. At the time of publishing this website, I am finishing up my first semester as a masters student in bioinformatics at the University of Southern California. I completed my undergraduate at the University of California, San Diego with a bachelors in biochemistry and cell biology. I got started on my path in bioinformatics during the last year of my undergraduate degree, where I took a few courses that allowed me to see how powerful computational tools are in aiding biomedical research. Since then, I've took it upon myself to learn as much as I can about the world of bioinformatics and computational biology!
+
+
+-------
+
+#### Contact Information and Links:
+
+Email: [wuflemmi@usc.edu](wuflemmi@usc.edu)
+
+GitHub: [https://github.com/flemm0](https://github.com/flemm0)
+
+LinkedIn: [https://www.linkedin.com/in/flemming-w-08b11b121/](https://www.linkedin.com/in/flemming-w-08b11b121/)
