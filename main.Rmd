@@ -46,6 +46,8 @@ I used two other files to get demographic information, and to link food codes to
 4. **Finally, what specific food items are associated with high amounts of sugar or saturated fa?**
 
 
+#### Link to [full report](https://github.com/flemm0/nhanes_survey_analysis/raw/main/full_report/full_report.pdf)
+
 --------------
 
 
