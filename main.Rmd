@@ -25,26 +25,20 @@ df <- data.table::fread("https://media.githubusercontent.com/media/flemm0/PM566_
 
 ### Introduction
 
-Insulin resistance and diabetes is a growing health issue for Americans.
-When foods with a high glycemic index (causing a rapid rise in blood
-sugar) are consumed, the pancreas must pump insulin to move sugar from
-the blood back into the cells. Over time, if these foods are consumed on
-a consistent basis, cells stop responding to insulin and the normal
-blood sugar level rises. This leads to weight gain, as excess blood
-sugar is sent to be stored as body fat, and sets the stage for
-prediabetes and type 2 diabetes.  
+In this project, I analyzed dietary interview [data](https://www.ars.usda.gov/northeast-area/beltsville-md-bhnrc/beltsville-human-nutrition-research-center/food-surveys-research-group/docs/wweia-documentation-and-data-sets/) from the National Health and Nutrition Examination Survey, also known as NHANES. The goal for this analysis was to investigate the factors that affect peoples' consumption of high amounts of sugar and saturated fatty acids. According to articles published by the CDC on diabetes, people should be wary of continued consumption of foods containing high amounts of these ingredients, as they contribute to the development of insulin resistance and prediabetes. 
 
-While there are many other factors outside of diet that influence the
-development of insulin resistance and diabetes such as lifestyle,
-environmental factors, and family history, in this project, I will be
-investigating factors affecting our food choices using the NHANES
-(National Health and Nutrition Examination Survey) data. More
-specifically, I examined the data that was collected in [What We Eat in
-America
-(WWEIA)](https://www.ars.usda.gov/northeast-area/beltsville-md-bhnrc/beltsville-human-nutrition-research-center/food-surveys-research-group/docs/wweia-documentation-and-data-sets/),
-the dietary interview component of the NHANES.  
 
-I also acknowledge that people's dietary requirements vary due to a variety of factors, but according to the CDC and other sources, people should generally be wary of continued consumption of foods high in added sugar and saturated fats. Therefore, in this project, I will use the data to investigate the following questions that I have asked:\
+### About the data
+
+Data for the NHANES program is collected on an annual cycle. However, the program suspended operations in March 2020 due to the pandemic. The data I used for this analysis was a combination of the NHANES 2017-2018 cycle and 2019 to March 2020.
+
+
+The data I used came mainly from two files, storing participants' answers to day 1 and day 2 of the questionnaire. The rows in each files are separated as one food/drink item. The other columns describe information such as which participant ate/drank this item, when it was consumed, estimates on number of calories and macronutrients, and much more information. 
+
+I used two other files to get demographic information, and to link food codes to actual descriptions of the food/drink items in the questionnaire answer file. 
+
+
+### Questions
 
 1. **What time and/or day of the week do people generally eat foods high in sugar or saturated fatty acids (fa)?**
 2. **Does sugar or saturated fa consumption vary by age, ethnicity, or gender?**

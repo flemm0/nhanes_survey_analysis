@@ -5,9 +5,9 @@ account: qy27ax-flemming
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 7768873
-bundleId: 6570854
+bundleId: 6573591
 url: https://qy27ax-flemming.shinyapps.io/main/
-when: 1669784444.52605
-lastSyncTime: 1669784444.52606
+when: 1669831573.91702
+lastSyncTime: 1669831573.91703
 asMultiple: TRUE
 asStatic: FALSE
