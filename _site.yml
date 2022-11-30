@@ -4,7 +4,7 @@ navbar:
   title: "Food Survey Investigation"
   left:
     - text: "Home Page"
-      href: shiny_tabset.Rmd
+      href: main.Rmd
     - text: "Tables"
       href: tables.Rmd
     - text: "Supplementary"
