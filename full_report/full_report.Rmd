@@ -296,15 +296,15 @@ unique(df$racehispanic_origin_w_nh_asian)
 
 To view the summary tables, please refer to the corresponding [page](https://qy27ax-flemming.shinyapps.io/main/_w_0fae30f6/_w_8e5fb328/tables.Rmd) on the website. In the interest of keeping this report succinct, I will only be providing the interpretations here. 
 
-#### Table 1
+#### Table 1 |
 
 *Summary of the average sugar and saturated fatty acid consumption by the day of the week in which they were consumed.* According to Table 1, average sugar and saturated fatty acid consumption appears to be highest on Friday, Saturday, and Sunday. Tuesday is the day with the lowest average sugar and saturated fatty acid consumption.
  
-#### Table 2
+#### Table 2 |
 
 *Summary of hourly average sugar and saturated fatty acid consumption.* The number 0 corresponds to all items consumed between 12:00 AM and 12:59 PM, 1 corresponds to all items consumed between 1:00 AM and 1:59 AM, etc. It appears that average sugar and saturated fat consumption is highest between the hours of 8:00 PM and 3:00 AM.
 
-#### Table 3
+#### Table 3 |
 
 *Summary of average sugar and saturated fatty acid consumption by eating occasion.* Eating occasions that are more considered to be more formal meals, such as dinner, lunch, almuerzo (breakfast), desayano (breakfast), supper, etc. generally involve less consumption of sugar than do informal eating occasions such as snacks (including bocadillo, botana, merienda, entre comida). The reverse is true for saturated fats consumption, as the average grams consumed for these are slightly higher in more formal eating occasions.
 \
@@ -324,23 +324,23 @@ read_html("https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/dr1iff_c.htm#DR1_030Z") %>
   knitr::kable()
 ```
 
-#### Table 4
+#### Table 4 |
 
 *Summary of average sugar and saturated fatty acid consumption by age.* Consumption increases from birth until the ages of 14-18, and then decreases after age 18. Age group 14-18 sees the highest average sugar and saturated fatty acid consumption.
 
-#### Table 5
+#### Table 5 |
 
 *Summary of average sugar and saturated fatty acid consumption by gender.* Males consume higher amounts of sugar and saturated fatty acids on average, which makes sense considering that generally males have larger bodies than females, requiring them to consume more calories on average.
 
-#### Table 6
+#### Table 6 |
 
 *Summary of average sugar and saturated fatty acid consumption by race.* The groups with the highest average sugar and saturated fat consumption are "other race including multiracial" and "non-hispanic black", and they are closely followed by "non-hispanic white". The "non hispanic asian" group consumes less sugar and saturated fats on average than other groups.
 
-#### Table 7
+#### Table 7 |
 
 *Summary of average sugar and saturated fatty acid consumption by source of food.* High average sugar consumption can be seen to come from food sources such as vending machines and convenience stores, likely due to the sale of sugar-sweetened beverages. High saturated fatty acid consumption can be seen to come from food sources such as fish (likely due to naturally occurring omega fatty acids in fish) as well as fast food restaurants and recreational facilities.
 
-#### Table 8
+#### Table 8 |
 
 *Summary of average sugar and saturated fatty acid consumption by whether meal eaten at home*. Foods that were not eaten at home are generally slightly higher in sugars and saturated fatty acids content on average, however, the difference is quite small.
 
@@ -400,7 +400,7 @@ annotations = list(
   list( 
     x = 0,  
     y = 1.0,  
-    text = "Figure 1a",  
+    text = "<b>a</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -410,7 +410,7 @@ annotations = list(
   list( 
     x = 0,  
     y = 0.5,  
-    text = "Figure 1b",  
+    text = "<b>b</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -423,9 +423,7 @@ subplot(fig1.a, fig1.b, nrows=2, shareX = TRUE) %>%
   layout(annotations = annotations)
 ```
 
-*Figure 1a) Hourly average sugar consumption grouped by day of the week.* Average sugar consumption is high at around midnight on Sunday and Friday, but low on Monday and Thursday. Then, the lines for each of the days seem to converge at around 10:00 AM, and increase until the end of the day. 
-
-*Figure 1b) Hourly average saturated fatty acid consumption grouped by day of the week.* Average saturated fatty acid consumption is high around midnight on Saturday and Sunday, and lines for all days converge at around 7:00 AM. From there, the average saturated fatty acid consumption increases until the end of the day, especially so for Wednesday, which sees a dramatic spike in average saturated fatty acid consumption after 6:00 PM.
+**Figure 1** | *(a) Hourly average sugar consumption grouped by day of the week.* Average sugar consumption is high at around midnight on Sunday and Friday, but low on Monday and Thursday. Then, the lines for each of the days seem to converge at around 10:00 AM, and increase until the end of the day. *(b) Hourly average saturated fatty acid consumption grouped by day of the week.* Average saturated fatty acid consumption is high around midnight on Saturday and Sunday, and lines for all days converge at around 7:00 AM. From there, the average saturated fatty acid consumption increases until the end of the day, especially so for Wednesday, which sees a dramatic spike in average saturated fatty acid consumption after 6:00 PM.
 
 
 #### Figure 2
@@ -455,7 +453,7 @@ fig2.a <- df[, eating_cat :=
     select(eating_cat, eating_occasion, consumption) %>%
     plot_ly(x = ~consumption, y = ~factor(eating_occasion, lvls.a), color = ~eating_cat) %>%
     add_boxplot() %>%
-    layout(yaxis = list(title = "Eating Occasion"), xaxis = list(title = ""))
+    layout(yaxis = list(title = "Eating Occasion", tickfont = list(size = 6)), xaxis = list(title = ""))
 
 lvls.b <- df[, eating_occasion := 
               fifelse(eating_occasion == "Desayano", "Desayano (breakfast)",
@@ -481,13 +479,14 @@ fig2.b <- df[, eating_cat :=
     select(eating_cat, eating_occasion, consumption) %>%
     plot_ly(x = ~consumption, y = ~factor(eating_occasion, lvls.b), color = ~eating_cat, showlegend = FALSE) %>%
     add_boxplot() %>%
-    layout(xaxis = list(title = "Square Root of Grams Consumption", hoverformat = ".2f"))
+    layout(xaxis = list(title = "Square Root of Grams Consumption", hoverformat = ".2f"),
+           yaxis = list(tickfont = list(size = 6)))
 
 annotations = list( 
   list( 
     x = 0,  
     y = 1.0,  
-    text = "Figure 2a",  
+    text = "<b>a</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -497,7 +496,7 @@ annotations = list(
   list( 
     x = 0,  
     y = 0.45,  
-    text = "Figure 2b",  
+    text = "<b>b</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -509,10 +508,8 @@ annotations = list(
 subplot(fig2.a, fig2.b, nrows=2, shareX = FALSE, titleX = TRUE, margin = 0.05)  %>% 
   layout(annotations = annotations)
 ```
-
-*Figure 2a) Distribution of sugar consumption (square root transformed) for each eating occasion.* Eating occasions at different times of the day, such as breakfast, lunch, and dinner do not see much difference in sugar. However, the distribution of sugar consumption is lower in formal meals (such as breakfast, lunch or dinner) than in snacking occasions.
-
-*Figure 2b) Distribution of saturated fatty acid consumption (square root transformed) for each eating occasion.* Eating occasions at different times of the day, such as breakfast, lunch, and dinner do not see much difference in saturated fatty acid consumption either. While snacking occasions typically involve much higher average sugar consumption. The reverse trend can be seen for average saturated fatty acid consumption, as snacks have smaller distributions of saturated fatty acid consumption than meals.
+**Figure 2** | *(a) Distribution of sugar consumption (square root transformed) for each eating occasion.*
+ Eating occasions at different times of the day, such as breakfast, lunch, and dinner do not see much difference in sugar. However, the distribution of sugar consumption is lower in formal meals (such as breakfast, lunch or dinner) than in snacking occasions. *(b) Distribution of saturated fatty acid consumption (square root transformed) for each eating occasion.* Eating occasions at different times of the day, such as breakfast, lunch, and dinner do not see much difference in saturated fatty acid consumption either. While snacking occasions typically involve much higher average sugar consumption. The reverse trend can be seen for average saturated fatty acid consumption, as snacks have smaller distributions of saturated fatty acid consumption than meals.
 
 
 #### Figure 3
@@ -585,7 +582,7 @@ annotations = list(
   list( 
     x = 0,  
     y = 1.0,  
-    text = "Figure 3a",  
+    text = "<b>a</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -595,7 +592,7 @@ annotations = list(
   list( 
     x = 0.5,  
     y = 1.0,  
-    text = "Figure 3b",  
+    text = "<b>b</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -608,12 +605,7 @@ annotations = list(
 subplot(fig3.a, fig3.b) %>%
   layout(annotations = annotations)
 ```
-
-*Figure 3a) Proportion of total sugar consumption within each age and gender category by race.*
-
-*Figure 3b) Proportion of total saturated fatty acid consumption within each age and gender category by race.*
-
-The figure above plots the proportion of sugar or saturated fatty acid consumption within each ethnicity category, separated by age and gender. The proportion of consumption appears to be relatively similar across all ethnicity groups, with each group having about 17% of the consumption. The non-hispanic asian group seems to be slightly less than others, however, with an average of about 13% of the proportion.
+**Figure 3** | *(a) Proportion of total sugar consumption within each age and gender category by race.* *(b) Proportion of total saturated fatty acid consumption within each age and gender category by race.* The figure above plots the proportion of sugar or saturated fatty acid consumption within each ethnicity category, separated by age and gender. The proportion of consumption appears to be relatively similar across all ethnicity groups, with each group having about 17% of the consumption. The non-hispanic asian group seems to be slightly less than others, however, with an average of about 13% of the proportion.
 
 #### Figure 4
 
@@ -630,7 +622,7 @@ fig4.a <- df %>%
   mutate(consumption = round(sqrt(total_sugars_gm), 2)) %>%
   plot_ly(x = ~consumption, y = ~factor(food_source, lvls.a), showlegend = FALSE) %>%
   add_boxplot() %>%
-  layout(yaxis = list(tickfont = list(size = 8)))
+  layout(yaxis = list(tickfont = list(size = 8)), xaxis = list(title = ""))
 
 lvls.b <- df %>%
   filter(!is.na(food_source) & !is.na(total_saturated_fatty_acids_gm)) %>%
@@ -644,13 +636,13 @@ fig4.b <- df %>%
   mutate(consumption = round(sqrt(total_saturated_fatty_acids_gm), 2)) %>%
   plot_ly(x = ~consumption, y = ~factor(food_source, lvls.b), showlegend = FALSE) %>%
   add_boxplot() %>%
-  layout(yaxis = list(tickfont = list(size = 8)))
+  layout(yaxis = list(tickfont = list(size = 8)), xaxis = list(title = "Square Root of Grams Consumption"))
 
 annotations = list( 
   list( 
     x = 0,  
     y = 1.0,  
-    text = "Figure 4a",  
+    text = "<b>a</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -660,7 +652,7 @@ annotations = list(
   list( 
     x = 0,  
     y = 0.45,  
-    text = "Figure 4b",  
+    text = "<b>b</b>",  
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -669,15 +661,10 @@ annotations = list(
   )
 )
 
-subplot(fig4.a, fig4.b, nrows = 2, margin = 0.05) %>%
+subplot(fig4.a, fig4.b, nrows = 2, shareX = FALSE, titleX = TRUE, margin = 0.05) %>%
   layout(annotations = annotations)
 ```
-
-*Figure 4a) Distribution of sugar consumption (square root transformed) for each source of food.*
-
-*Figure 4b) Distribution of saturated fatty acid consumption (square root transformed) for each source of food.*
-
-It is interesting to note that the median for both sugar and saturated fatty acid distributions is highest from food obtained from fundraiser sales. School cafeterias also are prominent sources of high sugar and saturated fatty acid consumption. Additionally, the highest consumption of sugar and saturated fatty acid consumption comes from the "Store - grocery/supermarket" category, as this category has the most large outliers.
+**Figure 4** | *(a) Distribution of sugar consumption (square root transformed) for each source of food.* *(b) Distribution of saturated fatty acid consumption (square root transformed) for each source of food.* It is interesting to note that the median for both sugar and saturated fatty acid distributions is highest from food obtained from fundraiser sales. School cafeterias also are prominent sources of high sugar and saturated fatty acid consumption. Additionally, the highest consumption of sugar and saturated fatty acid consumption comes from the "Store - grocery/supermarket" category, as this category has the most large outliers.
 
 
 ------------------------------------------------------------------------------------------------
