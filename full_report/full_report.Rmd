@@ -10,36 +10,41 @@ output:
 # Introduction
 
 
-Insulin resistance and diabetes is a growing health issue for Americans. When foods with a high glycemic index (causing a rapid rise in blood sugar) are consumed, the pancreas must pump insulin to move sugar from the blood back into the cells. Over time, if these foods are consumed on a consistent basis, cells stop responding to insulin and the normal blood sugar level rises. This leads to weight gain, as excess blood sugar is sent to be stored as body fat, and sets the stage for prediabetes and type 2 diabetes.\
+Insulin resistance and diabetes is a growing health issue for Americans. When foods with a high glycemic index (causing a rapid rise in blood sugar) are consumed, the pancreas must pump insulin to move sugar from the blood back into the cells. Over time, if these foods are consumed on a consistent basis, cells stop responding to insulin and the normal blood sugar level rises. This leads to weight gain, as excess blood sugar is sent to be stored as body fat, and sets the stage for prediabetes and type 2 diabetes.
 
-While there are many other factors outside of diet that influence the development of insulin resistance and diabetes such as lifestyle, environmental factors, and family history, in this project, I will be investigating factors affecting our food choices using the NHANES (National Health and Nutrition Examination Survey) data. More specifically, I examined the data that was collected in [What We Eat in America (WWEIA)](https://www.ars.usda.gov/northeast-area/beltsville-md-bhnrc/beltsville-human-nutrition-research-center/food-surveys-research-group/docs/wweia-documentation-and-data-sets/), the dietary interview component of the NHANES. \
+While there are many other factors outside of diet that influence the development of insulin resistance and diabetes such as lifestyle, environmental factors, and family history, in this project, I will be investigating factors affecting our food choices using the NHANES (National Health and Nutrition Examination Survey) data. More specifically, I examined the data that was collected in [What We Eat in America (WWEIA)](https://www.ars.usda.gov/northeast-area/beltsville-md-bhnrc/beltsville-human-nutrition-research-center/food-surveys-research-group/docs/wweia-documentation-and-data-sets/), the dietary interview component of the NHANES.
 
-I also acknowledge that people's dietary requirements vary due to a variety of factors, but according to the CDC and other sources, people should generally be wary of continued consumption of foods high in added sugar and saturated fats. Therefore, in this project, I will use the data to investigate the following questions that I have asked:\
+I also acknowledge that people's dietary requirements vary due to a variety of factors, but according to the CDC and other sources, people should generally be wary of continued consumption of foods high in added sugar and saturated fats. Therefore, in this project, I will use the data to investigate the following questions that I have asked:
 
-1. **What time and/or day of the week do people generally eat foods high in sugar or saturated fatty acids (fa)?**
-2. **Does sugar or saturated fa consumption vary by age, ethnicity, or gender?**
-3. **Does the source of food or whether the meal was eaten at home have an effect on sugar or saturated fa consumption?**
-4. **Finally, what specific food items are associated with high amounts of sugar or saturated fa?**
+1. What time and/or day of the week do people generally eat foods high in sugar or saturated fatty acids?
+2. Does sugar or saturated fatty acid consumption vary by age, ethnicity, or gender?
+3. Does the source of food or whether the meal was eaten at home have an effect on sugar or saturated fatty acid consumption?
+4. What specific food items in the dataset are associated with high amounts of sugar or saturated fatty acids?
 
-
-##### About the data
-I used a total of four data sets for my project. The first two are answers to a food survey questionnaire, in which the respondents were asked to recall all food and drink they consumed in a 24 hour period. These questions were asked one two different days, with day one answers being one table and day two answers being the other table. Not all respondents were recorded in both days. Observations, or rows, in the food survey data are separated into individual food or drink items and also includes estimates on how much of each item was consumed, as well as energy and nutrient estimates for each item. Participants were asked additional questions about their consumption, such as what time the item was consumed, what meal it was a part of, whether the meal was eaten at home, etc. The next data set I used contains general demographic information about each of the participants, such as age, gender, ethnicity, etc. The last data set I used contains descriptions of food information. Since the food items in the food survey questionnaires were encoded as numbers, I used this table to cross-reference the food code numbers with descriptions of the food or drink items.
-
----
+------------------------------------------------------------------------------------------------
 
 # Methods
+
+
+## About the data
+
+I used a total of four datasets for my project. The first two datasets contain answers to the food survey questionnaire, in which the respondents were asked to recall all food and drink they consumed in a 24 hour period. These questions were asked on two different days, with day 1 answers being one table and day 2 answers being the other table. Day 1 is collected in person in a mobile examination center and contains information from 12,634 respondents with a complete intake, including 242 individuals that were breastfed. Day 2 answers are collected over the phone 3 to 10 days following Day 1, and contains information from 10,830 respondents with a complete intake, including 203 individuals that were breastfed. This implies that not all respondents were recorded in both days. Observations, or rows, in the food survey data are separated into individual food or drink items, meaning each record is one food/drink item (identified by a USDA food code) consumed by a participant. Each record also identifies other information about the food/drink items such as the intake day of week, the time and name of the eating occasion for the food, whether food was eaten in combination with other foods (for example, milk added to cereal), amount of food consumed, and amounts of food energy and 64 nutrients/food components provided by the food amount.
+
+The next data set I used contains general demographic information about each of the participants, such as age, gender, ethnicity, pregnancy status, language used for interview, among others. The last data set I used contains descriptions of food information. Since the food items in the food survey questionnaires were encoded as numbers, I used this table to cross-reference the food code numbers with descriptions of the food or drink items.
+
+## Data Preparation
+
 The data provided on the website were in SAS Transport File Format, so I used the `haven` package to read in the data directly from the http link. Once I read in the data into R, I noticed that the column names were encoded with names that weren't intuitive such as "WTDRD1PP", but the data sets also contained column labels which explained the meanings of the column names. I did some text processing on the labels, such as removing non-alphanumeric characters and removing spaces, and then set these as the column names to make downstream work easier. I then noticed that all of the categorical variables in the data were encoded with numbers, such as a 1 for yes or a 2 for no. To fix this, I went through the data set [documentation](https://wwwn.cdc.gov/NCHS/nhanes/2017-2018/P_DR2IFF.htm) and updated the categorical observations with their actual character values. I then added a column to each of the food survey data tables to keep track of which day the answers were from and then concatenated the data from day 1 and day 2. Lastly, I merged all of the data into one data table, using the respondent id numbers and food code numbers as the common keys.
 
----
+------------------------------------------------------------------------------------------------
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
 knitr::opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
-#setwd("~/Desktop/PM566/midterm")
 ```
 
 ```{r load libraries, warning=FALSE, message=FALSE, results = 'hide'}
-load.lib<-c("haven", "sjlabelled", "data.table", "tidyverse", "xml2", "rvest") #list of packages needed
+load.lib<-c("haven", "sjlabelled", "data.table", "tidyverse", "xml2", "rvest", "plotly") #list of packages needed
 install.lib <- load.lib[!load.lib %in% installed.packages()] #select those not installed for installation
 for (lib in install.lib) { #install packages needed for installation including dependencies
   install.packages(lib, dependencies = TRUE)
@@ -78,7 +83,6 @@ food_categories <- as.data.table(food_categories)
 demographic <- as.data.table(demographic)
 ```
 
-
 ```{r remove columns that are not needed}
 fs_d1 <- fs_d1[, c(1:30)]
 fs_d2 <- fs_d2[, c(1:30)]
@@ -113,7 +117,6 @@ demographic[, pregnancy_status_at_exam := fifelse(pregnancy_status_at_exam == 1,
                                           fifelse(pregnancy_status_at_exam == 2, "not_pregnant",
                                           fifelse(pregnancy_status_at_exam == 3, "cannot_ascertain", NA_character_)))]
 ```
-
 
 ```{r create age category variable for demographic table}
 demographic[, age_category := fifelse(age_in_years_at_screening == 0, "<1",
@@ -177,7 +180,6 @@ setnames(fs_d1, "Value.Description", "food_source")
 fs_d1 <- fs_d1[-c(1)]
 ```
 
-
 ```{r Categorize food survey day 2 variables}
 # columns needed: day of the week, name of eating occasion, source of food, and if the food was eaten at home categorized
 # create new column for this so it can still be ordered
@@ -226,7 +228,6 @@ setnames(fs_d2, "Value.Description", "food_source")
 fs_d2 <- fs_d2[-c(1)]
 ```
 
-
 ```{r create columns to identify difference between day 1 and day 2 interview records}
 fs_d1 <- as.data.table(fs_d1)
 fs_d2 <- as.data.table(fs_d2)
@@ -235,11 +236,6 @@ fs_d2[, interview_day := "Day 2"]
 # combine into one dataframe
 fs <- rbind(fs_d1, fs_d2)
 ```
-
-
-# Preliminary Results
-
-##### Summary Tables
 
 ```{r merge data and begin EDA}
 #### Exploratory Data Analysis
@@ -258,23 +254,24 @@ df <- merge(
 df <- as.data.table(df)
 ```
 
-```{r check dimensions headers and footers, results='hide'}
+```{r check dimensions headers and footers, results='hide', eval = FALSE}
 dim(df)
 head(df)
 tail(df)
 ```
 
-```{r check variable types, results = "hide"}
+```{r check variable types, results = "hide", eval = FALSE}
 str(df)
 ```
 
-```{r summary tables of total sugar and fat consumption, results = "hide"}
+```{r summary tables of total sugar and fat consumption, results = "hide", eval = FALSE}
 # Check key variables and provide summary statistics in tabular form
 # First, check the predicted variables
 quantile(df$total_sugars_gm, seq(0, 1, 0.1))
 quantile(df$total_saturated_fatty_acids_gm, seq(0, 1, 0.1))
 ```
-```{r view total sugar and fat measurements in food items, results = "hide", warning = FALSE}
+
+```{r view total sugar and fat measurements in food items, results = "hide", warning = FALSE, eval = FALSE}
 #Some food items seem to be high in sugars and saturated fats, lets see what it makes sense
 df[total_sugars_gm > 200, .(unique(long_food_code_description), total_sugars_gm)] %>%
   head(n = 20) 
@@ -283,7 +280,7 @@ df[total_saturated_fatty_acids_gm > 50,
   head(n = 20)
 ```
 
-```{r check predictor variables, results = 'hide'}
+```{r check predictor variables, results = 'hide', eval = FALSE}
 unique(df$food_source)
 unique(df$eating_occasion)
 unique(df$did_you_eat_this_meal_at_home)
@@ -293,70 +290,23 @@ unique(df$gender)
 unique(df$racehispanic_origin_w_nh_asian)
 ```
 
+# Results
 
-```{r sugar fat consumption by day of week}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), # rounding output to three decimal places to make more readable
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N
-     ),
-   by = c("intake_day_of_the_week", "intake_day_cat")][order(intake_day_of_the_week)][, intake_day_cat:num_observations] %>%
-  knitr::kable(col.names = c("Day of Food Intake", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
-Average sugar and saturated fat consumption appears to be highest on Friday, Saturday, and Sunday. Tuesday is the day with the lowest average sugar and saturated fat consumption.
+## Summary Tables
+
+To view the summary tables, please refer to the corresponding [page](https://qy27ax-flemming.shinyapps.io/main/_w_0fae30f6/_w_8e5fb328/tables.Rmd) on the website. In the interest of keeping this report succinct, I will only be providing the interpretations here. 
+
+#### Table 1
+
+*Summary of the average sugar and saturated fatty acid consumption by the day of the week in which they were consumed.* According to Table 1, average sugar and saturated fatty acid consumption appears to be highest on Friday, Saturday, and Sunday. Tuesday is the day with the lowest average sugar and saturated fatty acid consumption.
  
-```{r sugar fat consumption by time of consumption}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N
-     ), 
-   by = hour(time_of_eating_occasion_hhmm)][order(hour)] %>%
-  knitr::kable(col.names = c("Hour of the Day (0 = 12:00 AM - 12:59 AM, 23 = 11:00 PM - 11:59 PM)", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
-The table above looks at hourly average sugar and saturated fat consumption, with 0 corresponding to all items consumed between 12:00 AM and 12:59 PM, 1 corresponding to all items consumed between 1:00 AM and 1:59 AM, etc. It appears that average sugar and saturated fat consumption is highest between the hours of 8:00 PM and 3:00 AM.
+#### Table 2
 
-```{r}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N
-   ), 
-   by = eating_occasion][, eating_occasion := fifelse(eating_occasion == "Desayano", "Desayano (breakfast)", # include english translations of the spanish meal occasions
-                                                fifelse(eating_occasion == "Almuerzo", "Almuerzo (breakfast)",
-                                                fifelse(eating_occasion == "Comida", "Comida (lunch)",
-                                                fifelse(eating_occasion == "Merienda", "Merienda (snack)",
-                                                fifelse(eating_occasion == "Cena", "Cena (dinner)",
-                                                fifelse(eating_occasion == "Entre comida", "Entre comida (snack)",
-                                                fifelse(eating_occasion == "Botana", "Botana (snack)",
-                                                fifelse(eating_occasion == "Bocadillo", "Bocadillo (snack)",
-                                                fifelse(eating_occasion == "Tentempie", "Tentempie (snack)",
-                                                fifelse(eating_occasion == "Bebida", "Bebida (drink)", eating_occasion))))))))))][order(-avg_total_sugar, -avg_total_sat_fa)] %>%
-  knitr::kable(col.names = c("Eating Occasion", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
+*Summary of hourly average sugar and saturated fatty acid consumption.* The number 0 corresponds to all items consumed between 12:00 AM and 12:59 PM, 1 corresponds to all items consumed between 1:00 AM and 1:59 AM, etc. It appears that average sugar and saturated fat consumption is highest between the hours of 8:00 PM and 3:00 AM.
 
-Eating occasions that are more considered to be more formal meals, such as dinner, lunch, almuerzo (breakfast), desayano (breakfast), supper, etc. generally involve less consumption of sugar than do informal eating occasions such as snacks (including bocadillo, botana, merienda, entre comida). The reverse is true for saturated fats consumption, as the average grams consumed for these are slightly higher in more formal eating occasions.
+#### Table 3
+
+*Summary of average sugar and saturated fatty acid consumption by eating occasion.* Eating occasions that are more considered to be more formal meals, such as dinner, lunch, almuerzo (breakfast), desayano (breakfast), supper, etc. generally involve less consumption of sugar than do informal eating occasions such as snacks (including bocadillo, botana, merienda, entre comida). The reverse is true for saturated fats consumption, as the average grams consumed for these are slightly higher in more formal eating occasions.
 \
 Note: the data I used (2017-2020) did not provide English translations for Spanish meal names, but they were provided in the 2003-2004 NHANES data [documentation](https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/dr1iff_c.htm#DR1_030Z), which is what I used for reference in this analysis:
 
@@ -366,335 +316,386 @@ read_html("https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/dr1iff_c.htm#DR1_030Z") %>
   html_table() %>%
   as.data.frame() %>%
   filter(row_number() %in% c(10:19)) %>%
-  select(Value.Description) %>%
-  mutate(new_code = str_extract(Value.Description, "\\([a-z]+\\)")) %>%
+  select(Value.Description)  %>%
+  mutate(English = str_extract(Value.Description, "\\([a-z]+\\)")) %>%
   mutate(Value.Description = str_replace(Value.Description, "\\([a-z]+\\)", "")) %>%
-  rename("Spanish" = "Value.Description", "English" = "new_code") %>%
-  t() %>%
+  rename(Spanish = Value.Description) %>%
+  mutate(English = str_to_title(str_replace_all(English, "\\(|\\)", ""))) %>%
   knitr::kable()
+```
+
+#### Table 4
+
+*Summary of average sugar and saturated fatty acid consumption by age.* Consumption increases from birth until the ages of 14-18, and then decreases after age 18. Age group 14-18 sees the highest average sugar and saturated fatty acid consumption.
+
+#### Table 5
+
+*Summary of average sugar and saturated fatty acid consumption by gender.* Males consume higher amounts of sugar and saturated fatty acids on average, which makes sense considering that generally males have larger bodies than females, requiring them to consume more calories on average.
+
+#### Table 6
+
+*Summary of average sugar and saturated fatty acid consumption by race.* The groups with the highest average sugar and saturated fat consumption are "other race including multiracial" and "non-hispanic black", and they are closely followed by "non-hispanic white". The "non hispanic asian" group consumes less sugar and saturated fats on average than other groups.
+
+#### Table 7
+
+*Summary of average sugar and saturated fatty acid consumption by source of food.* High average sugar consumption can be seen to come from food sources such as vending machines and convenience stores, likely due to the sale of sugar-sweetened beverages. High saturated fatty acid consumption can be seen to come from food sources such as fish (likely due to naturally occurring omega fatty acids in fish) as well as fast food restaurants and recreational facilities.
+
+#### Table 8
+
+*Summary of average sugar and saturated fatty acid consumption by whether meal eaten at home*. Foods that were not eaten at home are generally slightly higher in sugars and saturated fatty acids content on average, however, the difference is quite small.
+
+
+## Figures
+
+To interact with the plots, please refer to the corresponding [page](https://qy27ax-flemming.shinyapps.io/main/_w_ee5bf04b/main.Rmd) on the website. Supplementary figures and their interpretations can be found on this [page](https://qy27ax-flemming.shinyapps.io/main/_w_ee5bf04b/supp.Rmd)
+
+#### Figure 1
+
+```{r figure 1, fig.height=8, fig.width=12, fig.align="center", message=FALSE}
+# sugars
+df$eating_time <- as.POSIXct(df$time_of_eating_occasion_hhmm, format = "%H:%M:%S")
+
+fig1.a <- df %>%
+  select(intake_day_of_the_week, intake_day_cat, time_of_eating_occasion_hhmm, eating_time, total_sugars_gm) %>%
+      mutate(eating_time = format(round(eating_time, units="hours"), format="%H:%M")) %>%
+      group_by(intake_day_cat, eating_time) %>%
+      summarize(m = mean(total_sugars_gm)) %>%
+      arrange(match(intake_day_cat, 
+                    c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")),
+              eating_time) %>%
+      plot_ly(x = ~eating_time, y = ~m) %>%
+      add_lines(color = ~intake_day_cat) %>%
+      layout(
+        title = list("Average Sugar Consumption By Time of Day"),
+        yaxis = list(title = "Average Consumption (grams)"),
+        xaxis = list(
+          title = "Eating Time",
+          type = "time",
+          tickformat="%H:%M:%S"
+          )
+        )
+    
+# saturated fa
+fig1.b <- df %>%
+  select(intake_day_of_the_week, intake_day_cat, time_of_eating_occasion_hhmm, eating_time, total_saturated_fatty_acids_gm) %>%
+      mutate(eating_time = format(round(eating_time, units="hours"), format="%H:%M")) %>%
+      group_by(intake_day_cat, eating_time) %>%
+      summarize(m = mean(total_saturated_fatty_acids_gm)) %>%
+      arrange(match(intake_day_cat, 
+                    c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")),
+              eating_time) %>%
+      plot_ly(x = ~eating_time, y = ~m, showlegend = FALSE) %>%
+      add_lines(color = ~intake_day_cat) %>%
+      layout(
+        title = list("Average Sugar Consumption By Time of Day"),
+        yaxis = list(title = "Average Consumption (grams)"),
+        xaxis = list(
+          title = "Eating Time",
+          type = "time",
+          tickformat="%H:%M:%S"
+          )
+        )
+
+annotations = list( 
+  list( 
+    x = 0,  
+    y = 1.0,  
+    text = "Figure 1a",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  ),  
+  list( 
+    x = 0,  
+    y = 0.5,  
+    text = "Figure 1b",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  )
+)
+
+subplot(fig1.a, fig1.b, nrows=2, shareX = TRUE) %>% 
+  layout(annotations = annotations)
+```
+
+*Figure 1a) Hourly average sugar consumption grouped by day of the week.* Average sugar consumption is high at around midnight on Sunday and Friday, but low on Monday and Thursday. Then, the lines for each of the days seem to converge at around 10:00 AM, and increase until the end of the day. 
+
+*Figure 1b) Hourly average saturated fatty acid consumption grouped by day of the week.* Average saturated fatty acid consumption is high around midnight on Saturday and Sunday, and lines for all days converge at around 7:00 AM. From there, the average saturated fatty acid consumption increases until the end of the day, especially so for Wednesday, which sees a dramatic spike in average saturated fatty acid consumption after 6:00 PM.
+
+
+#### Figure 2
+
+```{r figure 2, warning=FALSE, fig.height = 8, fig.width = 12, fig.align = "center"}
+lvls.a <- df[, eating_occasion := 
+              fifelse(eating_occasion == "Desayano", "Desayano (breakfast)",
+              fifelse(eating_occasion == "Almuerzo", "Almuerzo (breakfast)",
+              fifelse(eating_occasion == "Comida", "Comida (lunch)",
+              fifelse(eating_occasion == "Merienda", "Merienda (snack)",
+              fifelse(eating_occasion == "Cena", "Cena (dinner)",
+              fifelse(eating_occasion == "Entre comida", "Entre comida (snack)",
+              fifelse(eating_occasion == "Botana", "Botana (snack)",
+              fifelse(eating_occasion == "Bocadillo", "Bocadillo (snack)",
+              fifelse(eating_occasion == "Tentempie", "Tentempie (snack)",
+              fifelse(eating_occasion == "Bebida", "Bebida (drink)", eating_occasion))))))))))] %>%
+  group_by(eating_occasion) %>%
+  summarise(m = median(total_sugars_gm)) %>%
+  arrange(m) %>%
+  pull(eating_occasion)
+    
+fig2.a <- df[, eating_cat := 
+     fifelse(grepl("snack", eating_occasion, ignore.case = TRUE), "snack", 
+             fifelse(grepl("(breakfast|lunch|dinner|supper|brunch)", eating_occasion, ignore.case = TRUE), 
+                     "meal", "other"))] %>%
+    mutate(consumption = sqrt(total_sugars_gm)) %>%
+    select(eating_cat, eating_occasion, consumption) %>%
+    plot_ly(x = ~consumption, y = ~factor(eating_occasion, lvls.a), color = ~eating_cat) %>%
+    add_boxplot() %>%
+    layout(yaxis = list(title = "Eating Occasion"), xaxis = list(title = ""))
+
+lvls.b <- df[, eating_occasion := 
+              fifelse(eating_occasion == "Desayano", "Desayano (breakfast)",
+              fifelse(eating_occasion == "Almuerzo", "Almuerzo (breakfast)",
+              fifelse(eating_occasion == "Comida", "Comida (lunch)",
+              fifelse(eating_occasion == "Merienda", "Merienda (snack)",
+              fifelse(eating_occasion == "Cena", "Cena (dinner)",
+              fifelse(eating_occasion == "Entre comida", "Entre comida (snack)",
+              fifelse(eating_occasion == "Botana", "Botana (snack)",
+              fifelse(eating_occasion == "Bocadillo", "Bocadillo (snack)",
+              fifelse(eating_occasion == "Tentempie", "Tentempie (snack)",
+              fifelse(eating_occasion == "Bebida", "Bebida (drink)", eating_occasion))))))))))] %>%
+  group_by(eating_occasion) %>%
+  summarise(m = median(total_saturated_fatty_acids_gm)) %>%
+  arrange(m) %>%
+  pull(eating_occasion)
+
+fig2.b <- df[, eating_cat := 
+     fifelse(grepl("snack", eating_occasion, ignore.case = TRUE), "snack", 
+             fifelse(grepl("(breakfast|lunch|dinner|supper|brunch)", eating_occasion, ignore.case = TRUE), 
+                     "meal", "other"))] %>%
+    mutate(consumption = sqrt(total_saturated_fatty_acids_gm)) %>%
+    select(eating_cat, eating_occasion, consumption) %>%
+    plot_ly(x = ~consumption, y = ~factor(eating_occasion, lvls.b), color = ~eating_cat, showlegend = FALSE) %>%
+    add_boxplot() %>%
+    layout(xaxis = list(title = "Square Root of Grams Consumption", hoverformat = ".2f"))
+
+annotations = list( 
+  list( 
+    x = 0,  
+    y = 1.0,  
+    text = "Figure 2a",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  ),  
+  list( 
+    x = 0,  
+    y = 0.45,  
+    text = "Figure 2b",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  )
+)
+
+subplot(fig2.a, fig2.b, nrows=2, shareX = FALSE, titleX = TRUE, margin = 0.05)  %>% 
+  layout(annotations = annotations)
+```
+
+*Figure 2a) Distribution of sugar consumption (square root transformed) for each eating occasion.* Eating occasions at different times of the day, such as breakfast, lunch, and dinner do not see much difference in sugar. However, the distribution of sugar consumption is lower in formal meals (such as breakfast, lunch or dinner) than in snacking occasions.
+
+*Figure 2b) Distribution of saturated fatty acid consumption (square root transformed) for each eating occasion.* Eating occasions at different times of the day, such as breakfast, lunch, and dinner do not see much difference in saturated fatty acid consumption either. While snacking occasions typically involve much higher average sugar consumption. The reverse trend can be seen for average saturated fatty acid consumption, as snacks have smaller distributions of saturated fatty acid consumption than meals.
+
+
+#### Figure 3
+
+```{r figure 3, fig.height = 8, fig.width = 12, fig.align = "center", message=FALSE}
+fig3.a <- df %>%
+  select(racehispanic_origin_w_nh_asian,
+           age_category, 
+           gender, 
+           respondent_sequence_number, 
+           interview_day,
+           total_sugars_gm) %>%
+    group_by(racehispanic_origin_w_nh_asian, age_category, gender) %>%
+    summarize(total_consumption = sum(total_sugars_gm), count = n()) %>%
+    mutate(tc_scaled = total_consumption / count) %>%
+    group_by(age_category, gender) %>%
+    mutate(prop = tc_scaled / sum(tc_scaled)) %>%
+    ungroup() %>%
+    unite(age_gender, c(age_category, gender), sep = " ") %>%
+    plot_ly(
+      y = ~prop, 
+      x = ~factor(age_gender, levels = c(
+                       "<1 male", "<1 female",
+                       "1-3 male", "1-3 female",
+                       "4-8 male", "4-8 female",
+                       "9-13 male", "9-13 female", 
+                       "14-18 male", "14-18 female",
+                       "19-30 male", "19-30 female",
+                       "31-50 male", "31-50 female",
+                       "51-70 male", "51-70 female",
+                       "70+ male", "70+ female")), 
+      color = ~racehispanic_origin_w_nh_asian, 
+      type = "bar"
+      ) %>%
+  layout(barmode = "stack", legend = list(font = list(size = 7)))
+
+fig3.b <- df %>%
+  select(racehispanic_origin_w_nh_asian,
+           age_category, 
+           gender, 
+           respondent_sequence_number, 
+           interview_day,
+           total_saturated_fatty_acids_gm) %>%
+    group_by(racehispanic_origin_w_nh_asian, age_category, gender) %>%
+    summarize(total_consumption = sum(total_saturated_fatty_acids_gm), count = n()) %>%
+    mutate(tc_scaled = total_consumption / count) %>%
+    group_by(age_category, gender) %>%
+    mutate(prop = tc_scaled / sum(tc_scaled)) %>%
+    ungroup() %>%
+    unite(age_gender, c(age_category, gender), sep = " ") %>%
+    plot_ly(
+      y = ~prop, 
+      x = ~factor(age_gender, levels = c(
+                       "<1 male", "<1 female",
+                       "1-3 male", "1-3 female",
+                       "4-8 male", "4-8 female",
+                       "9-13 male", "9-13 female", 
+                       "14-18 male", "14-18 female",
+                       "19-30 male", "19-30 female",
+                       "31-50 male", "31-50 female",
+                       "51-70 male", "51-70 female",
+                       "70+ male", "70+ female")), 
+      color = ~racehispanic_origin_w_nh_asian, 
+      type = "bar",
+      showlegend = FALSE
+      ) %>%
+  layout(barmode = "stack")
+
+annotations = list( 
+  list( 
+    x = 0,  
+    y = 1.0,  
+    text = "Figure 3a",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  ),  
+  list( 
+    x = 0.5,  
+    y = 1.0,  
+    text = "Figure 3b",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  )
+)
+
+
+subplot(fig3.a, fig3.b) %>%
+  layout(annotations = annotations)
+```
+
+*Figure 3a) Proportion of total sugar consumption within each age and gender category by race.*
+
+*Figure 3b) Proportion of total saturated fatty acid consumption within each age and gender category by race.*
+
+The figure above plots the proportion of sugar or saturated fatty acid consumption within each ethnicity category, separated by age and gender. The proportion of consumption appears to be relatively similar across all ethnicity groups, with each group having about 17% of the consumption. The non-hispanic asian group seems to be slightly less than others, however, with an average of about 13% of the proportion.
+
+#### Figure 4
+
+```{r figure 4, fig.height = 12, fig.width = 12, fig.align = "center"}
+lvls.a <- df %>%
+  filter(!is.na(food_source) & !is.na(total_sugars_gm)) %>%
+  group_by(food_source) %>%
+  summarise(m = median(sqrt(total_sugars_gm))) %>%
+  arrange(m) %>%
+  pull(food_source)
   
+fig4.a <- df %>%
+  filter(!is.na(food_source) & !is.na(total_sugars_gm)) %>%
+  mutate(consumption = round(sqrt(total_sugars_gm), 2)) %>%
+  plot_ly(x = ~consumption, y = ~factor(food_source, lvls.a), showlegend = FALSE) %>%
+  add_boxplot() %>%
+  layout(yaxis = list(tickfont = list(size = 8)))
+
+lvls.b <- df %>%
+  filter(!is.na(food_source) & !is.na(total_saturated_fatty_acids_gm)) %>%
+  group_by(food_source) %>%
+  summarise(m = median(sqrt(total_saturated_fatty_acids_gm))) %>%
+  arrange(m) %>%
+  pull(food_source)
+  
+fig4.b <- df %>%
+  filter(!is.na(food_source) & !is.na(total_saturated_fatty_acids_gm)) %>%
+  mutate(consumption = round(sqrt(total_saturated_fatty_acids_gm), 2)) %>%
+  plot_ly(x = ~consumption, y = ~factor(food_source, lvls.b), showlegend = FALSE) %>%
+  add_boxplot() %>%
+  layout(yaxis = list(tickfont = list(size = 8)))
+
+annotations = list( 
+  list( 
+    x = 0,  
+    y = 1.0,  
+    text = "Figure 4a",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  ),  
+  list( 
+    x = 0,  
+    y = 0.45,  
+    text = "Figure 4b",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  )
+)
+
+subplot(fig4.a, fig4.b, nrows = 2, margin = 0.05) %>%
+  layout(annotations = annotations)
 ```
 
+*Figure 4a) Distribution of sugar consumption (square root transformed) for each source of food.*
 
-```{r sugar and saturated fat consumption by age category}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N,
-     min(age_in_years_at_screening)
-     ), 
-   by = "age_category"][order(V6)][, !c("V6")] %>%
-  knitr::kable(col.names = c("Age Range", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
-Average sugar and saturated fat consumption increases from birth until the ages of 14-18, and then decreases after age 18.
+*Figure 4b) Distribution of saturated fatty acid consumption (square root transformed) for each source of food.*
 
-```{r sugar and saturated fat consumption by gender}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N
-     ), 
-   by = "gender"] %>%
-  knitr::kable(col.names = c("Gender", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
-Males consume higher amounts of sugar and saturated fatty acids on average, which makes sense considering that generally males have larger bodies than females, requiring them to consume more calories on average.
-
-```{r sugar and saturated fat consumption by ethnicity}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N
-     ), 
-   by = "racehispanic_origin_w_nh_asian"] %>%
-  knitr::kable(col.names = c("Race", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
-The groups with the highest average sugar and saturated fat consumption are "other race including multiracial" and "non-hispanic black", and they are closely followed by "non-hispanic white". The "non hispanic asian" group consumes less sugar and saturated fats on average than other groups.
-
-```{r sugar and saturated fat consumption by source of food}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N
-     ), 
-   by = "food_source"][order(-avg_total_sugar, -avg_total_sat_fa)] %>%
-  knitr::kable(col.names = c("Food Source", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
-High average sugar consumption can be seen to come from food sources such as vending machines and convenience stores, likely due to the sale of sugar-sweetened beverages. High saturated fatty acid consumption can be seen to come from food sources such as fish (likely due to naturally occurring omega fatty acids in fish) as well as fast food restaurants and recreational facilities.
-
-```{r sugar and saturated fat consumption by where meal was eaten}
-df[, 
-   .(avg_total_sugar = round(mean(total_sugars_gm), digits = 3), 
-     std_total_sugar = round(sd(total_sugars_gm), digits = 3),
-     avg_total_sat_fa = round(mean(total_saturated_fatty_acids_gm), digits = 3),
-     std_total_sat_fa = round(sd(total_saturated_fatty_acids_gm), digits = 3),
-     num_observations = .N
-     ), 
-   by = "did_you_eat_this_meal_at_home"][order(-avg_total_sugar)] %>%
-  knitr::kable(col.names = c("Meal Eaten at Home", 
-                             "Average Total Sugar Consumption (grams)",
-                             "Standard Deviation of Total Sugar Consumption",
-                             "Average Total Saturated Fatty Acid Consumption (grams)",
-                             "Standard Deviation of Total Saturated Fatty Acid Consumption",
-                             "Number of Observations"))
-```
-The table above reveals that food not eaten at home is generally slightly higher in average sugars and saturated fatty acids, however, the difference is quite small.
+It is interesting to note that the median for both sugar and saturated fatty acid distributions is highest from food obtained from fundraiser sales. School cafeterias also are prominent sources of high sugar and saturated fatty acid consumption. Additionally, the highest consumption of sugar and saturated fatty acid consumption comes from the "Store - grocery/supermarket" category, as this category has the most large outliers.
 
 
-##### Figures
+------------------------------------------------------------------------------------------------
 
-##### What time and/or day of the week do people generally eat foods high in sugar or saturated fatty acids (fa)?
+# Conclusion and Summary
 
-```{r plot sugar and saturated fa consumption against time grouped by day of the week, fig.height = 8, fig.width = 12, fig.align = "center"}
-# sugars
-df[, .(mean(total_sugars_gm)), by = c("intake_day_cat", "time_of_eating_occasion_hhmm")] %>%
-  ggplot() +
-  geom_smooth(mapping = aes(x = time_of_eating_occasion_hhmm, y = V1, col = intake_day_cat), formula = y ~ x, method = "loess", alpha = 0.01, se = FALSE, show.legend = TRUE) +
-  labs(color = "Day of the Week", title = "Hourly Average Total Sugar Consumption by Day of Week") +
-  scale_color_manual(values = c("Sunday" = "#EAFF74", 
-                                "Monday" = "#7D74FF", 
-                                "Tuesday" = "#FF7474", 
-                                "Wednesday" = "#64FF52", 
-                                "Thursday" = "#0600D0", 
-                                "Friday" = "#F60C1E", 
-                                "Saturday" = "#F68F0C")) +
-  ylab("Average Total Sugar Consumption (grams)") +
-  xlab("Time of the Day")
-# saturated fa
-df[, .(mean(total_saturated_fatty_acids_gm)), by = c("intake_day_cat", "time_of_eating_occasion_hhmm")] %>%
-  ggplot() +
-  geom_smooth(mapping = aes(x = time_of_eating_occasion_hhmm, y = V1, col = intake_day_cat), formula = y ~ x, method = "loess", alpha = 0.01, se = FALSE, show.legend = TRUE) +
-  labs(color = "Day of the Week", title = "Hourly Average Total Saturated Fatty Acid Consumption by Day of Week") +
-  scale_color_manual(values = c("Sunday" = "#EAFF74", 
-                                "Monday" = "#7D74FF", 
-                                "Tuesday" = "#FF7474", 
-                                "Wednesday" = "#64FF52", 
-                                "Thursday" = "#0600D0", 
-                                "Friday" = "#F60C1E", 
-                                "Saturday" = "#F68F0C")) +
-  ylab("Average Total Saturated Fatty Acid Consumption (grams)") +
-  xlab("Time of the Day")
-```
-Average sugar consumption is high at around midnight on Sunday and Friday, but low on Monday and Thursday. Then, the lines for each of the days seem to converge at around 10:00 AM, and increase until the end of the day. Average saturated fatty acid consumption is high around midnight on Saturday and Sunday, and lines for all days converge at around 7:00 AM. From there, the average saturated fatty acid consumption increases until the end of the day, especially so for Wednesday, which sees a dramatic spike in average saturated fatty acid consumption after 6:00 PM.
-
-
-```{r plot sugar and saturated fa consumption by eating occasion, warning=FALSE, fig.height = 8, fig.width = 12, fig.align = "center"}
-# sugar
-df[!is.na(eating_occasion) & !is.na(total_sugars_gm)][, eating_occasion := 
-                                                fifelse(eating_occasion == "Desayano", "Desayano (breakfast)",
-                                                fifelse(eating_occasion == "Almuerzo", "Almuerzo (breakfast)",
-                                                fifelse(eating_occasion == "Comida", "Comida (lunch)",
-                                                fifelse(eating_occasion == "Merienda", "Merienda (snack)",
-                                                fifelse(eating_occasion == "Cena", "Cena (dinner)",
-                                                fifelse(eating_occasion == "Entre comida", "Entre comida (snack)",
-                                                fifelse(eating_occasion == "Botana", "Botana (snack)",
-                                                fifelse(eating_occasion == "Bocadillo", "Bocadillo (snack)",
-                                                fifelse(eating_occasion == "Tentempie", "Tentempie (snack)",
-                                                fifelse(eating_occasion == "Bebida", "Bebida (drink)", eating_occasion))))))))))] %>%
-  ggplot(mapping = aes(x = forcats::fct_reorder(factor(eating_occasion),
-    total_sugars_gm, mean), y = total_sugars_gm)) +
-  stat_summary(fun.data = mean_se, geom = "errorbar") +
-  stat_summary(fun = mean, size = 0.4) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) +
-  labs(x = "Name of Eating Occasion", y = "Average Grams Sugar Consumption", title = "Sugar Consumption vs Eating Occasion")
-# saturated Fatty Acid
-df[!is.na(eating_occasion) & !is.na(total_saturated_fatty_acids_gm)][, eating_occasion := 
-                                                fifelse(eating_occasion == "Desayano", "Desayano (breakfast)",
-                                                fifelse(eating_occasion == "Almuerzo", "Almuerzo (breakfast)",
-                                                fifelse(eating_occasion == "Comida", "Comida (lunch)",
-                                                fifelse(eating_occasion == "Merienda", "Merienda (snack)",
-                                                fifelse(eating_occasion == "Cena", "Cena (dinner)",
-                                                fifelse(eating_occasion == "Entre comida", "Entre comida (snack)",
-                                                fifelse(eating_occasion == "Botana", "Botana (snack)",
-                                                fifelse(eating_occasion == "Bocadillo", "Bocadillo (snack)",
-                                                fifelse(eating_occasion == "Tentempie", "Tentempie (snack)",
-                                                fifelse(eating_occasion == "Bebida", "Bebida (drink)", eating_occasion))))))))))] %>%
-  ggplot(mapping = aes(x = forcats::fct_reorder(factor(eating_occasion),
-    total_saturated_fatty_acids_gm, mean), y = total_saturated_fatty_acids_gm)) +
-  stat_summary(fun.data = mean_se, geom = "errorbar") +
-  stat_summary(fun = mean, size = 0.4) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) +
-  labs(x = "Name of Eating Occasion", y = "Average Grams Saturated Fatty Acid Consumption", title = "Saturated Fatty Acid Consumption vs Eating Occasion")
-```
-Although eating occasions at different times of the day, such as breakfast, lunch, and dinner do not see much difference in sugar or saturated fatty acid consumption, the plots above do reveal that average sugar consumption is lowest in formal meals such as breakfast, lunch or dinner. On the other end, snacking occasions typically involve much higher average sugar consumption. The reverse trend can be seen for average saturated fa consumption, as snacks are lower on the y-axis than meals such as lunch or dinner.
-
-#### Does sugar / saturated fatty acid consumption vary by age, ethnicity, gender?
-
-
-
-```{r sugar and sat fa consumption by age, fig.height = 8, fig.width = 12, fig.align = "center"}
-# sugars
-unique(df[, 
-          .(sugar_consumption = sum(total_sugars_gm), 
-            age_category, gender, 
-            respondent_sequence_number), 
-          by = c("respondent_sequence_number", "interview_day")][, 
-                                                                 .(sugar_consumption = mean(sugar_consumption), 
-                                                                   age_category, 
-                                                                   gender), 
-                                                                 by = "respondent_sequence_number"])  %>%
-  ggplot(mapping= aes(x = factor(age_category, levels = c("<1", "1-3", "4-8", "9-13", "14-18", "19-30", "31-50", "51-70", "70+")), y = sugar_consumption, fill = gender)) +
-  geom_violin() +
-  stat_summary(fun = median, geom = "point", position = position_dodge(0.9)) +
-  labs(x = "Age Range", y = "Sugar Consumption (grams) in 24 Hours", title = "Sugar Consumption vs Age", fill = "Gender") +
-  scale_fill_brewer(palette = "Paired")
-# saturated fa
-unique(df[, 
-          .(sat_fa_consumption = sum(total_saturated_fatty_acids_gm), 
-            age_category, 
-            gender, 
-            respondent_sequence_number), 
-          by = c("respondent_sequence_number", "interview_day")][, 
-                                                                 .(sat_fa_consumption = mean(sat_fa_consumption), 
-                                                                   age_category, 
-                                                                   gender), 
-                                                                 by = "respondent_sequence_number"]) %>%
-  ggplot(mapping = aes(x = factor(age_category, levels = c("<1", "1-3", "4-8", "9-13", "14-18", "19-30", "31-50", "51-70", "70+")), y = sat_fa_consumption, fill = gender)) +
-  geom_violin() +
-  stat_summary(fun = median, geom = "point", position = position_dodge(0.9)) +
-  labs(x = "Age Range", y = "Saturated FA Consumption (grams) in 24 Hours", title = "Saturated FA Consumption vs Age", fill = "Gender") +
-  scale_fill_brewer(palette = "Paired")
-```
-The violin plots above reveal several trends in average sugar and saturated fatty acid consumption: first, that consumption is higher on average for males than females. Secondly, the trend in median sugar consumption increases until ages 14-18, and then remains about consistent at around 100 grams per day. The trend in median saturated fa consumption increases until ages 31-50, and then decreases. Lastly, the range of values tends to increase with increasing age, especially so for males, made evident by the width of the distributions decreasing with increasing age.
-
-```{r sugar and sat fa consumption by ethnicity, fig.height = 8, fig.width = 12, fig.align = "center"}
-#sugar
-unique(df[, 
-          .(sugar_consumption = sum(total_sugars_gm), 
-            racehispanic_origin_w_nh_asian, 
-            gender, 
-            respondent_sequence_number), 
-          by = c("respondent_sequence_number", 
-                 "interview_day")][, 
-                                   .(sugar_consumption = mean(sugar_consumption), 
-                                     racehispanic_origin_w_nh_asian, 
-                                     gender), 
-                                   by = "respondent_sequence_number"])  %>%
-  ggplot(mapping = aes(x = racehispanic_origin_w_nh_asian, y = sugar_consumption, fill = gender)) +
-  geom_violin() +
-  stat_summary(fun = median, geom = "point", position = position_dodge(0.9)) +
-  labs(x = "Ethnicity", y = "Sugar Consumption (grams) in 24 Hours", title = "Sugar Consumption vs Ethnicity", fill = "Gender") +
-  scale_fill_brewer(palette = "Paired")
-#saturated fa
-unique(df[, 
-          .(sat_fa_consumption = sum(total_saturated_fatty_acids_gm), 
-            racehispanic_origin_w_nh_asian, 
-            gender, 
-            respondent_sequence_number), 
-          by = c("respondent_sequence_number", "interview_day")][, 
-                                                                 .(sat_fa_consumption = mean(sat_fa_consumption), 
-                                                                   racehispanic_origin_w_nh_asian, 
-                                                                   gender), 
-                                                                 by = "respondent_sequence_number"])  %>%
-  ggplot(mapping = aes(x = racehispanic_origin_w_nh_asian, y = sat_fa_consumption, fill = gender)) +
-  geom_violin() +
-  stat_summary(fun = median, geom = "point", position = position_dodge(0.9)) +
-  labs(x = "Ethnicity", y = "Saturated Fatty Acid Consumption (grams) in 24 Hours", title = "Saturated Fatty Acid Consumption vs Ethnicity", fill = "Gender") +
-  scale_fill_brewer(palette = "Paired")
-```
-In plotting the average sugar and saturated fatty acid consumption by ethnicity and gender, there is not much variation between ethnicity groups and sugar consumption. However, the lowest median sugar and saturated fatty acid consumption and range of values is lowest in the non-hispanic asian group.
-
-#### Does the source of the food or whether the meal was eaten at home have an effect?
-
-```{r plot meal eaten at home, fig.height = 8, fig.width = 12, fig.align = "center"}
-ggplot(data = df[total_sugars_gm != 0], mapping = aes(x = log(total_sugars_gm), fill = did_you_eat_this_meal_at_home)) +
-  geom_histogram(bins = 100, alpha = 0.8) +
-  labs(x = "Log Total Sugar Consumption", y = "Number of Observations", title = "Log Transformation of Sugar Consumption vs Whether Meal Was Eaten at Home (Zero Values Excluded)", fill = "Meal Eaten at Home?") +
-  scale_fill_brewer(palette = "Pastel1")
-ggplot(data = df[total_saturated_fatty_acids_gm != 0], mapping = aes(x = log(total_saturated_fatty_acids_gm), fill = did_you_eat_this_meal_at_home)) +
-  geom_histogram(bins = 100, alpha = 0.8) +
-  labs(x = "Log Total Saturated FA Consumption", y = "Number of Observations", title = "Log Transformation of Saturated FA Consumption vs Whether Meal Was Eaten at Home (Zero Values Excluded)", fill = "Meal Eaten at Home?") +
-  scale_fill_brewer(palette = "Pastel1")
-```
-The distributions above describe the amount of sugar and saturated fa in individual food items grouped by whether the item was eaten at home or not. Food items containing zero sugar or saturated fa were excluded and the x-axis was log transformed to account for few items having high amounts of sugar or saturated fa. It can be observed that whether the food item was consumed at home or not does not have a significant effect on sugar or saturated fa consumption, as the distributions for "yes" and "no" are very similar in both plots. 
-
-
-```{r plot source of food, warning=FALSE, fig.height = 8, fig.width = 12, fig.align = "center"}
-#sugars
-df[!is.na(food_source) & !is.na(total_sugars_gm)] %>%
-  ggplot(mapping = aes(x = forcats::fct_reorder(factor(food_source), 
-                                                total_sugars_gm, mean), y = total_sugars_gm)) +
-  stat_summary(fun.data = mean_se, geom = "errorbar") +
-  stat_summary(fun = mean, size = 0.4) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) +
-  labs(x = "Source of Food", y = "Total Sugar Consumption (grams)", title = "Sugar Consumption vs Source of Food")
-#saturated fa
-df[!is.na(food_source) & !is.na(total_sugars_gm)] %>%
-  ggplot(mapping = aes(x = forcats::fct_reorder(factor(food_source),
-                                                           total_saturated_fatty_acids_gm, mean), y = total_saturated_fatty_acids_gm)) +
-  stat_summary(fun.data = mean_se, geom = "errorbar") +
-  stat_summary(fun = mean, size = 0.4) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) +
-  labs(x = "Source of Food", y = "Total Saturated FA Consumption (grams)", title = "Saturated FA Consumption vs Source of Food")
-```
-The sources of food in which people obtain the highest amount of sugar on average include vending machines, convenience stores, and fundraisers sales, whereas people obtain the lowest amount of sugar on average from fish, restaurants and mail order purchases. As for saturated fa, people obtain the highest amounts from recreational facilities, fundraiser sales, and fish, whereas the lowest amounts are obtained from coffee, mail order purchase, and vending machines. These results makes sense, as non-dairy drinks usually do not contain fatty acids, and fish are high in omega-3 fatty acids. 
-
-#### What foods are associated with high sugar or high saturated fatty acids?
-
-```{r get distribution of sugar content in foods, results='hide'}
-quantile(df$total_sugars_gm, seq(0, 1, 0.05))["95%"] # lets consider high amounts of sugar to be > 95th percentile 33.11
-quantile(df$total_saturated_fatty_acids_gm, seq(0, 1, 0.05))["95%"] # 8.511 grams is 95th percentile for saturated fa
-```
-
-
-```{r, fig.height = 8, fig.width = 12, fig.align = "center"}
-# sugar
-df[total_sugars_gm > 33.11, .N, by = "long_food_code_description"][order(-N)] %>%
-  head(n = 30) %>%
-  ggplot(aes(x = N, y = forcats::fct_reorder(long_food_code_description, N))) +
-  geom_col() +
-  labs(x = "Number of Occurrences",
-       y = "Name of Individual Food or Drink Item",
-       title = "Top 30 Food or Drink Items Containing Over 33.11 Grams Total Sugar")
-# saturated fa
-df[total_saturated_fatty_acids_gm > 8.511, .N, by = "long_food_code_description"][order(-N)] %>%
-  head(n = 30) %>%
-  ggplot(aes(x = N, y = forcats::fct_reorder(long_food_code_description, N))) +
-  geom_col() +
-  labs(x = "Number of Occurrences",
-       y = "Name of Individual Food or Drink Item",
-       title = "Top 30 Food or Drink Items Containing Over 8.51 Grams Total Saturated Fatty Acids")
-```
-It is interesting to see that the top four most common high-sugar content items are soft-drinks, and that 21 out of 30 of the items are a type of beverage. For saturated fatty acids, commonly occurring food items are pizza and dairy products (including ice cream, milkshakes, cheese, and milk).
-
-#### Preliminary Conclusions
 From the variables that I have investigated in this project, it appears that the eating occasion, source of food, time of consumption, and age have the greatest association with sugar and saturated fatty acid consumption. On the other hand, ethnicity and whether the meal was eaten at home or not do not seem to be associated strongly with sugar or saturated fatty acid consumption. Overall, people in this data set consume higher amounts of sugar during snacking occasions and from sources of food that include vending machines and convenience stores. Sugar-sweetened beverages seems to be the most common source of high intake of sugar
 
-\
+
 Moreover, people in the data set consume higher amount of saturated fatty acids during meals rather than snacks, and from sources of food that include fundraising events, recreational facilities, and fast food restaurants. The common foods associated with high saturated fatty acids include pizza, ice cream, milkshakes, and burgers. 
 
-\
+
 Both sugar and saturated fatty acid consumption slightly increase with age, are slightly higher on Wednesday, Saturday, and Sunday, and are highest between the hours of 8:00 PM and 3:00 AM.
 
-#### Further Directions
+### Further Directions
+
 In further analyses it would be interesting to see if any of the variables that I have suggested to have an association with sugar or saturated fatty acid consumption are correlated with each other.
 
-#### Sources
+### Sources
+
 * https://www.cdc.gov/diabetes/index.html
