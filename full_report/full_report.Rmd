@@ -388,7 +388,6 @@ fig1.b <- df %>%
       add_lines(color = ~intake_day_cat) %>%
       layout(
         title = list("Average Sugar Consumption By Time of Day"),
-        yaxis = list(title = "Average Consumption (grams)"),
         xaxis = list(
           title = "Eating Time",
           type = "time",
@@ -411,6 +410,17 @@ annotations = list(
     x = 0,  
     y = 0.5,  
     text = "<b>b</b>",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  ),  
+  list( 
+    x = -0.07,  
+    y = 0.35,  
+    textangle = 270,
+    text = "Average Consumption (grams)",
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -497,6 +507,17 @@ annotations = list(
     x = 0,  
     y = 0.45,  
     text = "<b>b</b>",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  ),  
+  list( 
+    x = -0.1,  
+    y = 0.35,  
+    textangle = 270,
+    text = "Eating Occasion",
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
@@ -598,6 +619,17 @@ annotations = list(
     xanchor = "center",  
     yanchor = "bottom",  
     showarrow = FALSE 
+  ),  
+  list( 
+    x = -0.07,  
+    y = 0.35,  
+    textangle = 270,
+    text = "Proportion of Consumption",
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
   )
 )
 
@@ -653,6 +685,17 @@ annotations = list(
     x = 0,  
     y = 0.45,  
     text = "<b>b</b>",  
+    xref = "paper",  
+    yref = "paper",  
+    xanchor = "center",  
+    yanchor = "bottom",  
+    showarrow = FALSE 
+  ),  
+  list( 
+    x = -0.31,  
+    y = 0.35,  
+    textangle = 270,
+    text = "Source of Food",
     xref = "paper",  
     yref = "paper",  
     xanchor = "center",  
