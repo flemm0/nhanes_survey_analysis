@@ -294,7 +294,7 @@ unique(df$racehispanic_origin_w_nh_asian)
 
 ## Summary Tables
 
-To view the summary tables, please refer to the corresponding [page](https://qy27ax-flemming.shinyapps.io/main/_w_0fae30f6/_w_8e5fb328/tables.Rmd) on the website. In the interest of keeping this report succinct, I will only be providing the interpretations here. 
+To view the summary tables, please refer to the corresponding on the website: [click here](https://qy27ax-flemming.shinyapps.io/main/_w_0fae30f6/_w_8e5fb328/tables.Rmd). In the interest of keeping this report succinct, I will only be providing the interpretations here. 
 
 #### Table 1 |
 
@@ -347,7 +347,7 @@ read_html("https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/dr1iff_c.htm#DR1_030Z") %>
 
 ## Figures
 
-To interact with the plots, please refer to the corresponding [page](https://qy27ax-flemming.shinyapps.io/main/_w_ee5bf04b/main.Rmd) on the website. Supplementary figures and their interpretations can be found on this [page](https://qy27ax-flemming.shinyapps.io/main/_w_ee5bf04b/supp.Rmd)
+To interact with the plots, please refer to the corresponding page on the website: [click here](https://qy27ax-flemming.shinyapps.io/main/_w_ee5bf04b/main.Rmd). Supplementary figures and their interpretations can be found on this page: [click here](https://qy27ax-flemming.shinyapps.io/main/_w_ee5bf04b/supp.Rmd)
 
 #### Figure 1
 
@@ -423,7 +423,7 @@ subplot(fig1.a, fig1.b, nrows=2, shareX = TRUE) %>%
   layout(annotations = annotations)
 ```
 
-**Figure 1** | *(a) Hourly average sugar consumption grouped by day of the week.* Average sugar consumption is high at around midnight on Sunday and Friday, but low on Monday and Thursday. Then, the lines for each of the days seem to converge at around 10:00 AM, and increase until the end of the day. *(b) Hourly average saturated fatty acid consumption grouped by day of the week.* Average saturated fatty acid consumption is high around midnight on Saturday and Sunday, and lines for all days converge at around 7:00 AM. From there, the average saturated fatty acid consumption increases until the end of the day, especially so for Wednesday, which sees a dramatic spike in average saturated fatty acid consumption after 6:00 PM.
+**Figure 1** | *(a) Hourly average sugar consumption grouped by day of the week.* Sugar consumption starts off lower at midnight on Tuesday and Thursday, and are higher for the other days of the week. Then, the lines seem to converge at around 7:00 AM, and from there there are spikes in sugar consumption at around 10:00 AM, 3:30 PM, and 9:00 - 11:00 PM. *(b) Hourly average saturated fatty acid consumption grouped by day of the week.* Average saturated fatty acid consumption varies less by day of the week with the lines converging at around 5:00 AM and steadily increasing for the next 21 hours.
 
 
 #### Figure 2
@@ -664,25 +664,22 @@ annotations = list(
 subplot(fig4.a, fig4.b, nrows = 2, shareX = FALSE, titleX = TRUE, margin = 0.05) %>%
   layout(annotations = annotations)
 ```
-**Figure 4** | *(a) Distribution of sugar consumption (square root transformed) for each source of food.* *(b) Distribution of saturated fatty acid consumption (square root transformed) for each source of food.* It is interesting to note that the median for both sugar and saturated fatty acid distributions is highest from food obtained from fundraiser sales. School cafeterias also are prominent sources of high sugar and saturated fatty acid consumption. Additionally, the highest consumption of sugar and saturated fatty acid consumption comes from the "Store - grocery/supermarket" category, as this category has the most large outliers.
+**Figure 4** | *(a) Distribution of sugar consumption (square root transformed) for each source of food.* *(b) Distribution of saturated fatty acid consumption (square root transformed) for each source of food.* It is interesting to note that the median for both sugar and saturated fatty acid distributions is highest from food obtained from fundraiser sales. School cafeterias also are prominent sources of high sugar and saturated fatty acid consumption. Additionally, the highest consumption of sugar and saturated fatty acid consumption comes from the "Store - grocery/supermarket" category, as this category has the most large outliers. Moreover, the food category "Fish caught by you or someone you know" has a high distribution in saturated fatty acids, likely due to fish containing high amounts of omega fatty acids.
 
 
 ------------------------------------------------------------------------------------------------
 
 # Conclusion and Summary
 
-From the variables that I have investigated in this project, it appears that the eating occasion, source of food, time of consumption, and age have the greatest association with sugar and saturated fatty acid consumption. On the other hand, ethnicity and whether the meal was eaten at home or not do not seem to be associated strongly with sugar or saturated fatty acid consumption. Overall, people in this data set consume higher amounts of sugar during snacking occasions and from sources of food that include vending machines and convenience stores. Sugar-sweetened beverages seems to be the most common source of high intake of sugar
+Out of all of the variables that I have investigated in this project, I have found that eating occasion, source of food, time of consumption, and age have stronger relationships with sugar and saturated fatty acid consumption than the other variables. Consumption of foods high in sugar or saturated fatty acids does not vary significantly by day of the week, but sugar consumption is highest between 8:00 AM and 4:00 AM, and saturated fatty acid consumption is lowest at 6:00 AM, and steadily increases throughout the day. (Figure 1) Furthermore, people in this data set consume higher amounts of sugar during snacking occasions and higher amounts of saturated fatty acids during meals rather than snacks. (Figure 2) Additionally, the sugar and saturated fatty acid content is fairly consistent between the foods eaten by people in the different ethnicity categories. However, there was a trend seen when looking at sugar and saturated fatty acid content by age. It seemed that the consumption of these ingredients increased from birth, and peaks at people ages 14-18, then starts to decline. (Figure 3) Moreover, foods that came from fundraising sales, community food programs, and K-12 school cafeterias had the highest distribution of foods high in sugars and saturated fatty acids. (Figure 4) Lastly, sugar-sweetened beverages seems to be the most common source of high intake of sugar, whereas the common foods associated with high saturated fatty acids include pizza, ice cream, milkshakes, and burgers. (Supplementary Figure 2)
 
-
-Moreover, people in the data set consume higher amount of saturated fatty acids during meals rather than snacks, and from sources of food that include fundraising events, recreational facilities, and fast food restaurants. The common foods associated with high saturated fatty acids include pizza, ice cream, milkshakes, and burgers. 
-
-
-Both sugar and saturated fatty acid consumption slightly increase with age, are slightly higher on Wednesday, Saturday, and Sunday, and are highest between the hours of 8:00 PM and 3:00 AM.
 
 ### Further Directions
 
-In further analyses it would be interesting to see if any of the variables that I have suggested to have an association with sugar or saturated fatty acid consumption are correlated with each other.
+In further analyses it would be interesting to see if any of the variables that I have suggested to have an association with sugar or saturated fatty acid consumption are correlated with each other. From there, it would also be interesting to work with more personalized information about the participants, such as primary place of residence, height, weight, income, access to food, etc.
 
 ### Sources
 
 * https://www.cdc.gov/diabetes/index.html
+
+* https://www.ars.usda.gov/northeast-area/beltsville-md-bhnrc/beltsville-human-nutrition-research-center/food-surveys-research-group/docs/wweia-documentation-and-data-sets/
