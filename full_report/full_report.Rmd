@@ -692,8 +692,8 @@ annotations = list(
     showarrow = FALSE 
   ),  
   list( 
-    x = -0.31,  
-    y = 0.35,  
+    x = -0.2,  
+    y = 0.43,  
     textangle = 270,
     text = "Source of Food",
     xref = "paper",  
