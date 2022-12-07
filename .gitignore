@@ -3,3 +3,5 @@
 full_report/full_report_cache
 full_report/full_report_files
 .Rproj.user
+.RData
+.Rhistory
